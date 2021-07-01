@@ -19,6 +19,6 @@ def get_jobs():
         type: finished/inprogress
         name:
         }"""
-    data = request.get_json(force=true)
+    data = request.get_json(force=True)
 
 
