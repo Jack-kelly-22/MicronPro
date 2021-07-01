@@ -2,3 +2,4 @@ micronPro-backend/.config/*
 micronPro-worker/job-data/*
 micronPro-worker/image-folder/*
 micronPro-frontend/*
+micronPro-backend/*

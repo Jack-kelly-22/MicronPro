@@ -1,0 +1,6 @@
+pymongo
+gunicorn
+flask
+flask-jwt-extended
+logger
+configparser
