@@ -4,3 +4,4 @@ flask
 flask-jwt-extended
 logger
 configparser
+flask_cors
