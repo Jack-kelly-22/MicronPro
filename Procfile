@@ -1,1 +1,1 @@
-web: gunicorn micronPro-backend/backend:app
+web: gunicorn backend:app --chdir ./micronPro-backend 
