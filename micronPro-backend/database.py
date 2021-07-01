@@ -19,8 +19,8 @@ class MicroDatabase:
             or password == "YOURPASSWORDHERE"
         ):
             logger.critical("user or password has not been changed!")
-            user = environ.getenv("user") 
-            password = environ.getenv("password")
+            user = environ.get("user") 
+            password = environ.get("password")
             logger.critical("saved?")
         else:
             logger.info("database credentials loaded")
