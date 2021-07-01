@@ -19,9 +19,9 @@ class MicroDatabase:
             or user == "YOURUSERHERE"
             or password == "YOURPASSWORDHERE"
         ):
-        #     logger.critical("user or password has not been changed!")
-        # else:
-        #     logger.info("database has been successfully hooked up")
+            logger.critical("user or password has not been changed!")
+        else:
+            logger.info("database has been successfully hooked up")
         self.client = MongoClient(
             "mongodb+srv://" + user +":" + password + "@maincluster.btvwv.mongodb.net"
         )
