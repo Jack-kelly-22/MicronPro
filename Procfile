@@ -1,1 +1,1 @@
-web: gunicorn backend:micronPro-backend/app
+web: gunicorn micronPro-backend/backend:app
