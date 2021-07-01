@@ -5,7 +5,7 @@ import json
 
 logger = logging.getLogger("root")
 
-class threadConfiguration:
+class BackendConfiguration:
     def __init__(self):
         self.config = configparser.ConfigParser()
         self.read_from_config_file()
