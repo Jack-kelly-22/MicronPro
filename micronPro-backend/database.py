@@ -3,7 +3,7 @@ from bson import json_util
 import uuid
 import json
 import logging
-
+from os import environ
 logger = logging.getLogger("root")
 
 
@@ -19,6 +19,9 @@ class MicroDatabase:
             or password == "YOURPASSWORDHERE"
         ):
             logger.critical("user or password has not been changed!")
+            user = environ.getenv("user") 
+            password = environ.getenv("password")
+            logger.critical("saved?")
         else:
             logger.info("database credentials loaded")
         self.client = MongoClient(
