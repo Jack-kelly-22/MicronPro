@@ -1,5 +1,7 @@
 micronPro-backend/.config/*
-micronPro-worker/job-data/*
-micronPro-worker/image-folder/*
-micronPro-frontend/*
-micronPro-backend/*
+micronPro-worker/
+micronPro-worker/
+micronPro-frontend/
+micronPro-worker/
+micronPro-backend/__pycache__/
+micronPro-backend/utils/__pycache__/
