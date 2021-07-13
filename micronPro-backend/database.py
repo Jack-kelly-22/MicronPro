@@ -28,15 +28,73 @@ class MicroDatabase:
         self.client = MongoClient(
             "mongodb+srv://" + user +":" + password + "@maincluster.btvwv.mongodb.net"
         )
+        print("CLIENT:",self.client.database_names())
         logger.info("database responded")
+        print(dict(self.client.micronProDB.stats.find_one()))
     
-    def get_jobs(self,name="",reverse=False,page=0):
+    def update_stats(self):
+        self.client.micronProDB.stats.update_one(
+            {"_id": "stats"},
+            {"$set": {"size": _SIZE}},
+            upsert=True
+        )
+        return self.client.micronProDB.stats.find_one()
+    
+    def get_stats(self):
+        for i in self.client.micronProDB.stats.find({'name': 'stats'}):
+            print("STATS:" ,i)
+            del i['_id']
+            return i
+        return {"error":"stats not found"}
+
+    def get_jobs(self,q):
         """gathers jobs from cloud mongo db"""
-        
+        q2={}
+        reverse = 'reverse' in q.keys()
+        if 'status' in q.keys() and q['status'] == 'In Progress':
+            q2["status"]="in_progress"
+        if 'status' in q.keys() and q['status'] == 'finished':
+            q2["status"]="finished"
+        if 'page' in q.keys() and int(q['page']) != 1:
+            page=int(q['page'])
+        else:
+            page=0
+        if "name" in q.keys():
+            q2["name"]=q['name']
+
         jobs = list(
-            self.client.Podcasts.allPodcasts.find(q)
-            .skip((page - 1) * _SIZE)
+            self.client.micronProDB.jobs.find(q2)
             .limit((page - 1) * _SIZE + _SIZE)
                 )
         jobs.reverse() if reverse else print("not reversed")
+        for job in jobs:
+            del job['_id']
+        return jobs
         
+    def post_new_config(self,config):
+        """posts new config to database"""
+        print("config:",config)
+        self.client.micronProDB.configs.insert_one(config)
+        return self.client.micronProDB.configs.find_one({"config_name": config["config_name"]})
+
+    def remove_config(self,config_name):
+            """posts new config to database"""
+            print("config_name:",config_name)
+            self.client.micronProDB.configs.delete_one({"config_name": config_name})
+            return True
+            
+
+            
+        
+    def get_configs(self,):
+            """gets all configs from database"""
+            configs = list(self.client.micronProDB.configs.find())
+            for conf in configs:
+                del conf['_id']
+            return configs
+
+    def insert_job(self,job):
+        """inserts job into database"""
+        print("JOB:",job)
+        self.client.micronProDB.jobs.insert_one(job)
+        return self.client.micronProDB.jobs.find_one({"job_name": job["job_name"]})

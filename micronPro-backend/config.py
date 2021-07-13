@@ -15,9 +15,9 @@ class BackendConfiguration:
             if not os.path.exists(".config"):
                 os.mkdir(".config")
 
-            self.config.add_section("NewsAPI")
             self.config.add_section("MongoDB")
             self.config.add_section("JWT")
+            
 
             if self.read_env_vars():
                 logger.critical("no environmental variables found")
