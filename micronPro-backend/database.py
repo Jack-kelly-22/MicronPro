@@ -6,6 +6,7 @@ import logging
 from os import environ
 logger = logging.getLogger("root")
 
+_SIZE=20
 
 class MicroDatabase:
     def __init__(self,config):
@@ -29,4 +30,13 @@ class MicroDatabase:
         )
         logger.info("database responded")
     
-    
+    def get_jobs(self,name="",reverse=False,page=0):
+        """gathers jobs from cloud mongo db"""
+        
+        jobs = list(
+            self.client.Podcasts.allPodcasts.find(q)
+            .skip((page - 1) * _SIZE)
+            .limit((page - 1) * _SIZE + _SIZE)
+                )
+        jobs.reverse() if reverse else print("not reversed")
+        
