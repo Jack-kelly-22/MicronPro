@@ -1,6 +1,5 @@
 micronPro-backend/.config/*
 micronPro-worker/
-micronPro-worker/
 micronPro-frontend/
 micronPro-worker/
 micronPro-backend/__pycache__/

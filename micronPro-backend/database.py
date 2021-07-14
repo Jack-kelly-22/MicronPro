@@ -52,7 +52,7 @@ class MicroDatabase:
         q2={}
         reverse = 'reverse' in q.keys()
         if 'status' in q.keys() and q['status'] == 'In Progress':
-            q2["status"]="in_progress"
+            q2["status"]="In Progress"
         if 'status' in q.keys() and q['status'] == 'finished':
             q2["status"]="finished"
         if 'page' in q.keys() and int(q['page']) != 1:
