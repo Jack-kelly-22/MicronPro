@@ -12,9 +12,9 @@ job_blueprint = Blueprint("job_blueprint", __name__)
 def trigger_new_job():
 
         job = request.get_json(force=True)
-
-        r = requests.post("http://127.0.0.1:8000"+"/new_job",job)
-        job = database_client.insert_job(job)
+        print("JOB: ", job)
+        r = requests.post("http://127.0.0.1:8000"+"/new_job",job['job'])
+        job = database_client.insert_job(job['job'])
         return {"message": "created job"}, 200
 
 

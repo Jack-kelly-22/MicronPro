@@ -6,6 +6,6 @@ configFile = BackendConfiguration()
 database_client = MicroDatabase(configFile.get_configuration())
 log.debug("initalized logger")
 
-workers = {5000: "0.0.0.0"}
+workers = {}
 
 WORKER_URL = "http://0.0.0.0:5201"
