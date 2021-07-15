@@ -47,6 +47,24 @@ class MicroDatabase:
             return i
         return {"error":"stats not found"}
 
+    def get_user(self, q=""):
+        """Retrieves users from pymongo db"""
+        return json.loads(
+            json.dumps(list(self.client.Users.users.find(q)), default=json_util.default)
+        )
+
+    def add_user(self, new_user=None):
+        """Adds a new user to pymongo db"""
+        logger.info("trying to add new user")
+
+        if len(self.get_user(q={"user_name": new_user["user_name"]})) != 0:
+            return {"result": -1, "msg": "username exists"}
+
+        if self.client.Users.users.insert_one(new_user).inserted_id:
+            return {"result": 1, "msg": "successfully inserted"}
+        else:
+            return {"result": -1, "msg": "failed to inserted"}
+
     def get_jobs(self,q):
         """gathers jobs from cloud mongo db"""
         q2={}
