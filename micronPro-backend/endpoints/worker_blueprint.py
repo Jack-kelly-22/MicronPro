@@ -4,21 +4,36 @@ import requests
 import os
 from time import time
 from backend_vars import database_client,workers,WORKER_URL
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 worker_blueprint = Blueprint("worker_blueprint", __name__)
 
 
+@worker_blueprint.route("/delete", methods=["POST"])
+@jwt_required()
+def delete():
+    """deletes specified folder from the worker"""
+    data=request.get_json(force=True)
+    print("DATA: ",data)
+    if "name" in data.keys() and data["name"] in workers.keys():
+        req = requests.post( data['url'] + '/rm_folder',{'folder':data["folder"]})
+        return {"msg":"great succuess"}
+    else:
+        return {"folders": ["no folders found"]}
+    
 
 @worker_blueprint.route("/worker_folders", methods=["POST"])
-# @jwt_required()
+@jwt_required()
 def get_folders():
     """should get folders of all active workers return folders and files inside"""
     """get folders on specified worker computer"""
     data = request.get_json(force=True)
-    req = requests.post(data["url"] + '/folders',data)
-    print("JSON: ",req.json())
-    return {"folders":req.json()['folders']}
+    if "name" in data.keys() and data["name"] in workers.keys():
+        req = requests.post( data['url'] + '/folders',data)
+        return {"folders":req.json()['folders']}
+    else:
+        return {"folders": ["no folders found"]}
 
 @worker_blueprint.route("/hello", methods=["POST"])
 # @jwt_required()
@@ -35,9 +50,11 @@ def worker_ping():
 
 
 @worker_blueprint.route("/workers_online", methods=["POST"])
-# @jwt_required()
+@jwt_required()
 def get_workers_online():
     """return dictionary containing urls and names of active workers"""
     # data = request.get_json(force=True)
     print("workers", workers)
+    if len(workers.values())==0:
+        return {"workers": []}
     return {'workers': list(workers.values())}

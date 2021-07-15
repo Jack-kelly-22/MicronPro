@@ -3,14 +3,16 @@ import json
 import requests
 import os
 from backend_vars import database_client,workers
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 job_blueprint = Blueprint("job_blueprint", __name__)
 
 
 
 @job_blueprint.route("/new_job", methods=["POST"])
+# @jwt_required()
 def trigger_new_job():
-
         job = request.get_json(force=True)
         print("JOB: ", job)
         r = requests.post("http://127.0.0.1:8000"+"/new_job",job['job'])
@@ -19,12 +21,14 @@ def trigger_new_job():
 
 
 @job_blueprint.route("/get_stats", methods=["POST"])
+@jwt_required()
 def get_stats():
     stats = database_client.get_stats()
     stats["workers_online"]=len(list(workers.keys()))
     return {"stats":stats}
 
 @job_blueprint.route("/get_jobs", methods=["POST"])
+@jwt_required()
 def get_jobs():
     """{
         status: finished/inprogress
@@ -36,6 +40,7 @@ def get_jobs():
     return {"jobs":jobs}
 
 @job_blueprint.route("/new_config", methods=["POST"])
+@jwt_required()
 def new_config():
     print("DATA", request.get_json(force=True))
     data = request.get_json(force=True)
@@ -44,6 +49,7 @@ def new_config():
 
 
 @job_blueprint.route("/remove_config", methods=["POST"])
+@jwt_required()
 def remove_config():
     print("DATA", request.get_json(force=True))
     data = request.get_json(force=True)
@@ -51,6 +57,7 @@ def remove_config():
         return {"message": "removed config"}, 200
 
 @job_blueprint.route("/get_configs", methods=["POST"])
+@jwt_required()
 def get_configs():
     return {"configs": database_client.get_configs()}
    
