@@ -40,6 +40,7 @@ def get_folders():
 def worker_ping():
     """used by workers to signal online"""
     data = request.get_json(force=True)
+    
     new_worker = {'name': data['self_name'], 'url': data['self_url'],'time':time()}
     workers[new_worker['name']] = new_worker
     for worker in workers.keys():
