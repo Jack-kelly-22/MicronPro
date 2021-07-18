@@ -116,3 +116,9 @@ class MicroDatabase:
         print("JOB:",job)
         self.client.micronProDB.jobs.insert_one(job)
         return self.client.micronProDB.jobs.find_one({"job_name": job["job_name"]})
+
+    def delete_job(self,job_id,host_name):
+        """deletes job from database"""
+        print("DELETING JOB WITH ID :",job_id)
+        self.client.micronProDB.jobs.delete_one({"job_Id": job_id})
+        return True

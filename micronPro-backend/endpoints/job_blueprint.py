@@ -15,9 +15,17 @@ job_blueprint = Blueprint("job_blueprint", __name__)
 def trigger_new_job():
         job = request.get_json(force=True)
         print("JOB: ", job)
-        r = requests.post("http://127.0.0.1:8000"+"/new_job",job['job'])
+        r = requests.post(workers[job['job']['worker_name']]['url']+"/new_job",job['job'])
         job = database_client.insert_job(job['job'])
         return {"message": "created job"}, 200
+
+
+@job_blueprint.route("/delete_job", methods=["POST"])
+@jwt_required()
+def delete_job():
+        data = request.get_json(force=True)
+        if database_client.delete_job(data['job_id']):
+                requests.post(workers[job['worker_name']]['url']+"/delete_job",{"job_name":job['job_name'])
 
 
 @job_blueprint.route("/get_stats", methods=["POST"])
