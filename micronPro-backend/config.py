@@ -33,6 +33,7 @@ class BackendConfiguration:
         user = os.environ.get("MONGOUSER")
         password = os.environ.get("MONGOPASS")
         jwt_secret = os.environ.get("JWTSECRET")
+        worker_secret = os.environ.get("WORKERSECRET")
 
         self.config.set("MongoDB", "user", "YOURUSERHERE")
         if user:
