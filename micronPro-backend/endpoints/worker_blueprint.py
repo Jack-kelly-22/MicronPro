@@ -3,7 +3,7 @@ import json
 import requests
 import os
 from time import time
-from backend_vars import database_client,workers,WORKER_URL
+from backend_vars import database_client,workers
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
@@ -30,7 +30,8 @@ def get_folders():
     """get folders on specified worker computer"""
     data = request.get_json(force=True)
     if "name" in data.keys() and data["name"] in workers.keys():
-        req = requests.post( data['url'] + '/folders',data)
+        
+        req = requests.post( workers[data["name"]]['url'] + '/folders',data)
         return {"folders":req.json()['folders']}
     else:
         return {"folders": ["no folders found"]}
@@ -40,7 +41,7 @@ def get_folders():
 def worker_ping():
     """used by workers to signal online"""
     data = request.get_json(force=True)
-    
+
     new_worker = {'name': data['self_name'], 'url': data['self_url'],'time':time()}
     workers[new_worker['name']] = new_worker
     for worker in workers.keys():
