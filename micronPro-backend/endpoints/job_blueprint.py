@@ -4,7 +4,7 @@ import requests
 import os
 from backend_vars import database_client,workers
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
+import uuid
 
 job_blueprint = Blueprint("job_blueprint", __name__)
 
@@ -14,9 +14,19 @@ job_blueprint = Blueprint("job_blueprint", __name__)
 # @jwt_required()
 def trigger_new_job():
         job = request.get_json(force=True)
-        print("JOB: ", job)
-        r = requests.post(workers[job['job']['worker_name']]['url']+"/new_job",job['job'])
-        job = database_client.insert_job(job['job'])
+        print("typed job: ",type(job))
+        job_id = str(uuid.uuid4())
+        job['job']["job_id"] = job_id
+        job['job']["out_path"] = "/job-data/"
+        job['job']["version"] = "3.0.3"
+        job['job']["num_images"] = 0
+        job['job']['simple'] = True
+        job['job']['progress'] = 0
+        #print("JOB: ", job)
+        requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
+        database_client.insert_job(job['job'])
+        # database_client.client.micronProDB.jobs.delete_many({"status":"In Progress"})
+        # return Response(json.dumps(job), status=200, mimetype='application/json')
         return {"message": "created job"}, 200
 
 
@@ -24,8 +34,11 @@ def trigger_new_job():
 @jwt_required()
 def delete_job():
         data = request.get_json(force=True)
-        if database_client.delete_job(data['job_id']):
-                requests.post(workers[job['worker_name']]['url']+"/delete_job",{"job_name":job['job_name'])
+        if "job_id" in data.keys() and database_client.delete_job(data['job_id']):
+                requests.post(workers[data['worker_name']]['url']+"/delete_job",json=data)
+                return {"message": "deleted job"}, 200
+        else:
+                return {"message": "job not found"}, 212
 
 
 @job_blueprint.route("/get_stats", methods=["POST"])

@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient,DESCENDING
 from bson import json_util
 import uuid
 import json
@@ -71,8 +71,8 @@ class MicroDatabase:
         reverse = 'reverse' in q.keys()
         if 'status' in q.keys() and q['status'] == 'In Progress':
             q2["status"]="In Progress"
-        if 'status' in q.keys() and q['status'] == 'finished':
-            q2["status"]="finished"
+        if 'status' in q.keys() and q['status'] == 'Complete':
+            q2["status"]="Complete"
         if 'page' in q.keys() and int(q['page']) != 1:
             page=int(q['page'])
         else:
@@ -115,10 +115,11 @@ class MicroDatabase:
         """inserts job into database"""
         print("JOB:",job)
         self.client.micronProDB.jobs.insert_one(job)
+        self.client.micronProDB.stats.update_one({"name":"stats"},{'$inc':{'in_progress':1}})
         return self.client.micronProDB.jobs.find_one({"job_name": job["job_name"]})
 
     def delete_job(self,job_id):
         """deletes job from database"""
         print("DELETING JOB WITH ID :",job_id)
         self.client.micronProDB.jobs.delete_one({"job_id": job_id})
-        return True
+        return {'msg':'job deleted from database'}
