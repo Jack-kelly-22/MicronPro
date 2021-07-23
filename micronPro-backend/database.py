@@ -65,6 +65,13 @@ class MicroDatabase:
         else:
             return {"result": -1, "msg": "failed to inserted"}
 
+    def get_users(self):
+        """gets all users from database"""
+        users = list(self.client.Users.users.find())
+        for user in users:
+            del user['_id']
+        return users
+
     def get_jobs(self,q):
         """gathers jobs from cloud mongo db"""
         q2={}

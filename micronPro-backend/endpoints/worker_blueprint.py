@@ -10,6 +10,22 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 worker_blueprint = Blueprint("worker_blueprint", __name__)
 
 
+@worker_blueprint.route("/users", methods=["POST"])
+@jwt_required()
+def get_users():
+    """
+    Get all users from the database
+    :return:dict of users
+    """
+    # Get the users from the database
+    try:
+        users = database_client.get_users()
+        # Return the users
+        return {'users': users}
+    except Exception as e:
+        return {'msg': str(e)}
+
+
 @worker_blueprint.route("/delete", methods=["POST"])
 @jwt_required()
 def delete():

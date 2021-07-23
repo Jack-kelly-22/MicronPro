@@ -25,8 +25,6 @@ def trigger_new_job():
         #print("JOB: ", job)
         requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
         database_client.insert_job(job['job'])
-        # database_client.client.micronProDB.jobs.delete_many({"status":"In Progress"})
-        # return Response(json.dumps(job), status=200, mimetype='application/json')
         return {"message": "created job"}, 200
 
 
