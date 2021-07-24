@@ -32,10 +32,10 @@ class MicroDatabase:
         logger.info("database responded")
         print(dict(self.client.micronProDB.stats.find_one()))
     
-    def update_stats(self):
+    def update_stats(self,q):
         self.client.micronProDB.stats.update_one(
             {"_id": "stats"},
-            {"$set": {"size": _SIZE}},
+            {"$set": q},
             upsert=True
         )
         return self.client.micronProDB.stats.find_one()
