@@ -130,3 +130,8 @@ class MicroDatabase:
         print("DELETING JOB WITH ID :",job_id)
         self.client.micronProDB.jobs.delete_one({"job_id": job_id})
         return {'msg':'job deleted from database'}
+
+    def reset_stats(self,q):
+        """resets stats"""
+        self.client.micronProDB.stats.update_one({"name":"stats"},{'$set':q})
+        return self.client.micronProDB.stats.find_one({"name":"stats"})
