@@ -72,6 +72,11 @@ class MicroDatabase:
             del user['_id']
         return users
 
+    def get_job(self,q):
+        """gets job from database"""
+        print("GETTING JOB WITH ID :",q)
+        return self.client.micronProDB.jobs.find_one({"job_id": q})
+
     def get_jobs(self,q):
         """gathers jobs from cloud mongo db"""
         q2={}
@@ -124,6 +129,12 @@ class MicroDatabase:
         self.client.micronProDB.jobs.insert_one(job)
         self.client.micronProDB.stats.update_one({"name":"stats"},{'$inc':{'in_progress':1}})
         return self.client.micronProDB.jobs.find_one({"job_name": job["job_name"]})
+
+    def update_job(self,job_id,job):
+        """updates job in database"""
+        print("UPDATING JOB WITH ID :",job_id)
+        self.client.micronProDB.jobs.update_one({"job_id": job_id},job)
+        return self.client.micronProDB.jobs.find_one({"job_id": job_id})
 
     def delete_job(self,job_id):
         """deletes job from database"""
