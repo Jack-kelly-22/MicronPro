@@ -24,7 +24,7 @@ def update_job():
         if job["action"] == "delete":
             if database_client.delete_job(job['job_id']):
                 requests.post(workers[job['worker_name']]['url']+"/delete_job",json=job)
-                return {"message": "deleted job"}, 200
+                return {"msg": "deleted job"}, 200
             return {'msg': 'failed to delete job'}, 411
             
         try:
@@ -48,10 +48,11 @@ def trigger_new_job():
         job['job']["num_images"] = 0
         job['job']['simple'] = True
         job['job']['progress'] = 0
+        job['job']['status'] = "queued"
         #print("JOB: ", job)
         requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
         database_client.insert_job(job['job'])
-        return {"message": "created job"}, 200
+        return {"msg": "created job"}, 200
 
 
 
@@ -91,7 +92,7 @@ def new_config():
     print("DATA", request.get_json(force=True))
     data = request.get_json(force=True)
     database_client.post_new_config(data['config'])
-    return {"message": "created config"}, 200
+    return {"msg": "created config"}, 200
 
 
 @job_blueprint.route("/remove_config", methods=["POST"])
@@ -100,7 +101,7 @@ def remove_config():
     print("DATA", request.get_json(force=True))
     data = request.get_json(force=True)
     if database_client.remove_config(data['config_name']):
-        return {"message": "removed config"}, 200
+        return {"msg": "removed config"}, 200
 
 @job_blueprint.route("/get_configs", methods=["POST"])
 @jwt_required()
