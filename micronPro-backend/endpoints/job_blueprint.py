@@ -9,15 +9,23 @@ import uuid
 job_blueprint = Blueprint("job_blueprint", __name__)
 
 @job_blueprint.route("/update_job", methods=["POST"])
-@jwt_required
+@jwt_required()
 def update_job():
     job=request.get_json(force=True)
     job_dic = database_client.get_job(job["job_id"])
     if "action" in job.keys():
         if job["action"]=="review":
             images = job['images']
-            job_dic['fail_images'] -= len(images)
-            job_dic['reviewed_images'] += images
+            # job_dic['fail_images'] -= len(images)
+            # job_dic['reviewed_images'] += images
+            return database_client.review_images(job_dic,images)
+        if job["action"]=="delete":
+            return database_client.delete_job(job_dic)
+        if job["action"]=="add" and "images" in job.keys():
+            images = job['images']
+            new_job = database_client.get_job(job["job_id"])
+            return database_client.add_images(new_job,images)
+
         if job["action"] == "flag":
             job_dic['flagged'] = True
 
@@ -49,8 +57,9 @@ def trigger_new_job():
         job['job']['simple'] = True
         job['job']['progress'] = 0
         job['job']['status'] = "queued"
+        job['job']['config_name]'] = job['job']['constants']['config_name']
         #print("JOB: ", job)
-        requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
+        # requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
         database_client.insert_job(job['job'])
         return {"msg": "created job"}, 200
 
@@ -63,7 +72,12 @@ def get_stats():
     stats["workers_online"]=len(list(workers.keys()))
     return {"stats":stats}
 
-
+@job_blueprint.route("/queued", methods=["get"])
+def get_queued():
+    queued = database_client.get_jobs({"status":"queued"})
+    if len(queued)==0:
+        return {"jobs""msg":"no jobs queued"},200
+    return {"jobs":queued},200
 # @job_blueprint.route("/edit_stats", methods=["POST"])
 # @jwt_required()
 # def get_stats():

@@ -93,7 +93,7 @@ class MicroDatabase:
             q2["name"]=q['name']
 
         jobs = list(
-            self.client.micronProDB.jobs.find(q2)
+            self.client.micronProDB.jobs.find(q2).sort("_id",-1).skip(page*_SIZE).limit(_SIZE)
             .limit((page - 1) * _SIZE + _SIZE)
                 )
         jobs.reverse() if reverse else print("not reversed")
@@ -106,6 +106,18 @@ class MicroDatabase:
         print("config:",config)
         self.client.micronProDB.configs.insert_one(config)
         return self.client.micronProDB.configs.find_one({"config_name": config["config_name"]})
+
+    def review_images(self,job,images):
+        """reviews images in database"""
+        for frame in job['frame_ls']:
+            for image in frame['image_data']:
+                if image['img_name'] in images:
+                    image['pass']=True
+                    job['img_review'].filter(lambda x: x['img_name'] != image['img_name'])
+        self.insert_job(job)
+        return 200
+                    
+
 
     def remove_config(self,config_name):
             """posts new config to database"""
@@ -130,10 +142,18 @@ class MicroDatabase:
         self.client.micronProDB.stats.update_one({"name":"stats"},{'$inc':{'in_progress':1}})
         return self.client.micronProDB.jobs.find_one({"job_name": job["job_name"]})
 
-    def update_job(self,job_id,job):
+    def update_job(self,job_id,job,images=None,action=None):
         """updates job in database"""
         print("UPDATING JOB WITH ID :",job_id)
+        if folders:
+            self.client.micronProDB.jobs.update_one({"job_id": job_id},{'$set':{"folders":folders}})
         self.client.micronProDB.jobs.update_one({"job_id": job_id},job)
+        return self.client.micronProDB.jobs.find_one({"job_id": job_id})
+
+    def add_images(job_id,images):
+        """adds images to job in database"""
+        print("ADDING IMAGES TO JOB WITH ID :",job_id)
+        self.client.micronProDB.jobs.update_one({"job_id": job_id},{'$set':{"status":"image_add_queued"}})
         return self.client.micronProDB.jobs.find_one({"job_id": job_id})
 
     def delete_job(self,job_id):

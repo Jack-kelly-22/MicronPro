@@ -47,7 +47,7 @@ def get_folders():
     data = request.get_json(force=True)
     if "name" in data.keys() and data["name"] in workers.keys():
         
-        req = requests.post( workers[data["name"]]['url'] + '/folders',data)
+        req = requests.post(workers[data["name"]]['url'] + '/folders',data)
         return {"folders":req.json()['folders']}
     else:
         return {"folders": ["no folders found"]}
