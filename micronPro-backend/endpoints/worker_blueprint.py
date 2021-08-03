@@ -40,7 +40,7 @@ def delete():
     
 
 @worker_blueprint.route("/worker_folders", methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def get_folders():
     """should get folders of all active workers return folders and files inside"""
     """get folders on specified worker computer"""
@@ -62,7 +62,7 @@ def worker_ping():
     workers[new_worker['name']] = new_worker
     worker_keys = workers.keys()
     for worker in worker_keys:
-        if workers[worker]['time'] < time() - 60:
+        if workers[worker]['time'] < time() - 62:
             print("DEAD WORKER: ",worker)
             del workers[worker]
     print("ALIVE WORKER", workers)
