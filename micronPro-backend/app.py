@@ -8,10 +8,12 @@ from endpoints.user_blueprint import user_blueprint
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app)
     app.config["JWT_SECRET_KEY"] = configFile.get_configuration()["JWT"]["secret"]
     jwt = JWTManager(app)
     app.register_blueprint(job_blueprint)
     app.register_blueprint(worker_blueprint)
     app.register_blueprint(user_blueprint)
+    CORS(job_blueprint)
+    CORS(worker_blueprint)
     return app
