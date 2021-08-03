@@ -60,8 +60,10 @@ def worker_ping():
 
     new_worker = {'name': data['self_name'], 'url': data['self_url'],'time':time()}
     workers[new_worker['name']] = new_worker
-    for worker in workers.keys():
+    worker_keys = workers.keys()
+    for worker in worker_keys:
         if workers[worker]['time'] < time() - 60:
+            print("DEAD WORKER: ",worker)
             del workers[worker]
     print("ALIVE WORKER", workers)
     return {"response":"success"}
