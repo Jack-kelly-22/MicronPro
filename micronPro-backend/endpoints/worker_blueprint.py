@@ -36,6 +36,7 @@ def delete():
         req = requests.post( data['url'] + '/rm_folder',{'folder':data["folder"]})
         return {"msg":"great succuess"}
     else:
+        print("DATA here: ",data)
         return {"folders": ["no folders found"]}
     
 
