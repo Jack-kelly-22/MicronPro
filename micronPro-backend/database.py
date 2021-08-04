@@ -144,7 +144,10 @@ class MicroDatabase:
             return {"msg":"error updating status"},301
 
     def get_alive_workers(self):
-        return list(self.client.micronProDB.workers.find({'status':'alive'}))
+        workers = list(self.client.micronProDB.workers.find({'status':'alive'}))
+        for worker in workers:
+            del worker['_id']
+        return workers
         
 
     def get_folders(self,name):

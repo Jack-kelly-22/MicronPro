@@ -57,9 +57,9 @@ def worker_ping():
     data = request.get_json(force=True)
 
     new_worker = {'name': data['self_name'], 'url': data['self_url'],'time':time()}
-    workers[new_worker['name']] = new_worker
     if new_worker['name'] not in workers.keys():
-        database_client.update_worker_status(worker, "alive")
+        database_client.update_worker_status(new_worker['name'], "alive")
+    workers[new_worker['name']] = new_worker
     worker_keys = workers.keys()
     for worker in worker_keys:
         if workers[worker]['time'] < time() - 62:
@@ -77,7 +77,8 @@ def get_workers_online():
     """return dictionary containing urls and names of active workers"""
     # data = request.get_json(force=True)
     w = database_client.get_alive_workers()
-    return {'workers': list(w.values())}
+    print("WORKERS ONLINE: ",w)
+    return {'workers': w}
 
 @worker_blueprint.route("/post_folders", methods=["POST"])
 def post_worker_folders():
