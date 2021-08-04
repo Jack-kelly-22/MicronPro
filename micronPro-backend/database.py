@@ -125,8 +125,32 @@ class MicroDatabase:
             self.client.micronProDB.configs.delete_one({"config_name": config_name})
             return True
             
+    def update_folders(self,name,folders):
+        try:
+            # prev_folders = self.get_folders(name)
+            # new_folders = list(set((folders + prev_folders)))
+            worker = self.client.micronProDB.workers.update_one({"name": name},{'$set':{"folders":folders}})
+            return {'msg':'successfully updated'}
+        except Exception as e:
+            print("ERROR",e)
+            return {"msg":"error updating folders"},301
+    
+    def update_worker_status(self,name,status):
+        try:
+            worker = self.client.micronProDB.workers.update_one({"name": name},{'$set':{"status":status}})
+            return {'msg':'successfully updated'}
+        except Exception as e:
+            print("ERROR",e)
+            return {"msg":"error updating status"},301
 
-            
+    def get_alive_workers(self):
+        return list(self.client.micronProDB.workers.find({'status':'alive'}))
+        
+
+    def get_folders(self,name):
+        """gets all folders from database"""
+        worker = self.client.micronProDB.workers.find_one({"name": name})
+        return worker['folders']
         
     def get_configs(self,):
             """gets all configs from database"""

@@ -46,9 +46,7 @@ def get_folders():
     """get folders on specified worker computer"""
     data = request.get_json(force=True)
     if "name" in data.keys() and data["name"] in workers.keys():
-        
-        req = requests.post(workers[data["name"]]['url'] + '/folders',data)
-        return {"folders":req.json()['folders']}
+        return {"folders":database_client.get_folders(data["name"])}
     else:
         return {"folders": ["no folders found"]}
 
@@ -60,11 +58,15 @@ def worker_ping():
 
     new_worker = {'name': data['self_name'], 'url': data['self_url'],'time':time()}
     workers[new_worker['name']] = new_worker
+    if new_worker['name'] not in workers.keys():
+        database_client.update_worker_status(worker, "alive")
     worker_keys = workers.keys()
     for worker in worker_keys:
         if workers[worker]['time'] < time() - 62:
             print("DEAD WORKER: ",worker)
             del workers[worker]
+            database_client.update_worker_status(worker, "dead")
+        
     print("ALIVE WORKER", workers)
     return {"response":"success"}
 
@@ -74,7 +76,14 @@ def worker_ping():
 def get_workers_online():
     """return dictionary containing urls and names of active workers"""
     # data = request.get_json(force=True)
-    print("workers", workers)
-    if len(workers.values())==0:
-        return {"workers": []}
-    return {'workers': list(workers.values())}
+    w = database_client.get_alive_workers()
+    return {'workers': list(w.values())}
+
+@worker_blueprint.route("/post_folders", methods=["POST"])
+def post_worker_folders():
+    data = request.get_json(force=True)
+    if "name" in data.keys():
+        print("FOLDERS: ",data["folders"])
+        folder_ls = [{folder:data['folders'][folder]} for folder in data["folders"].keys() if folder not in database_client.get_folders(data["name"])]
+        worker = database_client.update_folders(data['name'], folder_ls)
+        return worker
