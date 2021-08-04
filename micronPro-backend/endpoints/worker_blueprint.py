@@ -45,7 +45,7 @@ def get_folders():
     """should get folders of all active workers return folders and files inside"""
     """get folders on specified worker computer"""
     data = request.get_json(force=True)
-    if "name" in data.keys() and data["name"] in workers.keys():
+    if "name" in data.keys():
         return {"folders":database_client.get_folders(data["name"])}
     else:
         return {"folders": ["no folders found"]}
