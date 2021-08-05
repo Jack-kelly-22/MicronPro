@@ -16,7 +16,7 @@ def update_job():
     if "action" in job.keys():
         if job["action"]=="review":
             images = job['images']
-            # job_dic['fail_images'] -= len(images)
+            # job_dic['zfail_images'] -= len(images)
             # job_dic['reviewed_images'] += images
             return database_client.review_images(job_dic,images)
         if job["action"]=="delete":

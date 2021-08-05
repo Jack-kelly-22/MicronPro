@@ -85,6 +85,8 @@ class MicroDatabase:
             q2["status"]="In Progress"
         if 'status' in q.keys() and q['status'] == 'Complete':
             q2["status"]="Complete"
+        if 'status' in q.keys() and q['status'] == 'queued':
+            q2["status"]="queued"
         if 'page' in q.keys() and int(q['page']) != 1:
             page=int(q['page'])
         else:
@@ -129,7 +131,7 @@ class MicroDatabase:
         try:
             # prev_folders = self.get_folders(name)
             # new_folders = list(set((folders + prev_folders)))
-            worker = self.client.micronProDB.workers.update_one({"name": name},{'$set':{"folders":folders}})
+            worker = self.client.micronProDB.workers.update_one({"name": name},{'$push':{"folders":{"$each":folders}}})
             return {'msg':'successfully updated'}
         except Exception as e:
             print("ERROR",e)
