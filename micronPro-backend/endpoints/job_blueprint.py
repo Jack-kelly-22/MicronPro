@@ -76,8 +76,8 @@ def get_stats():
 def get_queued():
     q = {"status":"queued"}
     data = request.get_json(force=True)
-    if 'name' in data.keys():
-        q['name'] = data['name']
+    if 'worker_name' in data.keys():
+        q['worker_name'] = data['worker_name']
     queued = database_client.get_jobs(q)
     if len(queued)==0:
         return {"jobs""msg":"no jobs queued"},200
