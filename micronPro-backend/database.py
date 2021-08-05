@@ -93,7 +93,8 @@ class MicroDatabase:
             page=0
         if "name" in q.keys():
             q2["name"]=q['name']
-
+        if "worker_name" in q.keys():
+            q2["worker_name"]=q['worker_name']
         jobs = list(
             self.client.micronProDB.jobs.find(q2).sort("_id",-1).skip(page*_SIZE).limit(_SIZE)
             .limit((page - 1) * _SIZE + _SIZE)

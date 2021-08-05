@@ -82,15 +82,6 @@ def get_queued():
     if len(queued)==0:
         return {"jobs""msg":"no jobs queued"},200
     return {"jobs":queued},200
-# @job_blueprint.route("/edit_stats", methods=["POST"])
-# @jwt_required()
-# def get_stats():
-#     data = request.get_json(force=True)
-#     try:
-#         resp = database_client.update_stats(data)
-#         return {"stats":resp, 'msg': "updated stats"}, 200
-#     except Exception as e:
-#         return {"stats":None, 'msg': "failed to update stats"}, 500
 
 @job_blueprint.route("/get_jobs", methods=["POST"])
 @jwt_required()
