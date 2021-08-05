@@ -57,7 +57,7 @@ def trigger_new_job():
         job['job']['simple'] = True
         job['job']['progress'] = 0
         job['job']['status'] = "queued"
-        job['job']['config_name]'] = job['job']['constants']['config_name']
+        job['job']['config_name'] = job['job']['constants']['config_name']
         #print("JOB: ", job)
         # requests.post(workers[job['job']['worker_name']]['url']+"/new_job",json=job['job'])
         database_client.insert_job(job['job'])
@@ -74,7 +74,11 @@ def get_stats():
 
 @job_blueprint.route("/queued", methods=["get"])
 def get_queued():
-    queued = database_client.get_jobs({"status":"queued"})
+    q = {"status":"queued"}
+    data = request.get_json(force=True)
+    if 'name' in data.keys():
+        q['name'] = data['name']
+    queued = database_client.get_jobs(q)
     if len(queued)==0:
         return {"jobs""msg":"no jobs queued"},200
     return {"jobs":queued},200
