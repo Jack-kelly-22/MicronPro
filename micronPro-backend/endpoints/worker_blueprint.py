@@ -86,6 +86,6 @@ def post_worker_folders():
     data = request.get_json(force=True)
     if "name" in data.keys():
         print("FOLDERS: ",data["folders"])
-        folder_ls = [{folder:data['folders'][folder]} for folder in data["folders"].keys() if folder not in database_client.get_folders(data["name"])]
-        worker = database_client.update_folders(data['name'], folder_ls)
+        
+        worker = database_client.update_folders(data['name'], data["folders"])
         return worker
