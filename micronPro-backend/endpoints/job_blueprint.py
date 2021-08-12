@@ -80,7 +80,7 @@ def get_queued():
         q['worker_name'] = data['worker_name']
     queued = database_client.get_jobs(q)
     if len(queued)==0:
-        return {"jobs""msg":"no jobs queued"},200
+        return {"msg":"no jobs queued"},200
     return {"jobs":queued},200
 
 @job_blueprint.route("/get_jobs", methods=["POST"])
