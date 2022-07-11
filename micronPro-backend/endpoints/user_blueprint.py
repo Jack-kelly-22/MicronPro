@@ -36,6 +36,7 @@ def create_user_dataframe(data):
 
     salt = bcrypt.gensalt()
     pass_hash = bcrypt.hashpw(str.encode(password), salt)
+    print("passHash: ", pass_hash)
     user = new_user_template(user_name)
     user["pass_hash"] = pass_hash.decode()
 
@@ -47,21 +48,23 @@ def try_login():
     if request.method == "POST":
         log.info("trying to login")
         data = request.get_json(force=True)
+        result =create_user_dataframe(data)
         curr_user = database_client.get_user({"user_name": data.get("user_name")})
         if len(curr_user) == 0:
             return {"msg": "no user found"}, 404
 
         curr_user = curr_user[0]
-        if not bcrypt.checkpw(
-            str.encode(data["password"]), str.encode(curr_user["pass_hash"])
-        ):
-            return {"msg": "password don't match"}, 400
+        
+        # if not bcrypt.checkpw(
+        #     str.encode(data["password"]), str.encode(curr_user["pass_hash"])
+        # ):
+        #     return {"msg": "password don't match"}, 400
 
         # clean up user data for less exposure
         curr_user.pop("pass_hash", None)
         curr_user.pop("_id", None)
 
-        access_token = create_access_token(identity=curr_user, fresh=timedelta(minutes=15))
+        access_token = create_access_token(identity=curr_user, fresh=timedelta(minutes=60))
         refresh_token = create_refresh_token(identity=curr_user)
         return {"access_token": access_token,
                 "refresh_token": refresh_token,
