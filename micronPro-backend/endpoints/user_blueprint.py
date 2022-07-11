@@ -48,7 +48,7 @@ def try_login():
     if request.method == "POST":
         log.info("trying to login")
         data = request.get_json(force=True)
-        result =create_user_dataframe(data)
+        # result =create_user_dataframe(data)
         curr_user = database_client.get_user({"user_name": data.get("user_name")})
         if len(curr_user) == 0:
             return {"msg": "no user found"}, 404
